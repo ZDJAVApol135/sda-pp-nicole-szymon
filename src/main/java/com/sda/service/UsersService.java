@@ -3,6 +3,7 @@ package com.sda.service;
 import com.sda.dao.UsersDAO;
 import com.sda.dto.UserDTO;
 import com.sda.exception.NotFoundException;
+import com.sda.exception.UsernameConflictException;
 import com.sda.mapper.UserMapper;
 import com.sda.model.User;
 import lombok.RequiredArgsConstructor;
@@ -66,5 +67,13 @@ public class UsersService {
             String message = "User with username: '%s' not found".formatted(username);
             throw new NotFoundException(message);
         }
+    }
+    public void create(User user) {
+        boolean exists = usersDAO.exists(user.getUsername());
+        if (exists) {
+            String message = "User: '%s' already exists".formatted(user);
+            throw new UsernameConflictException(message);
+        }
+        usersDAO.create(user);
     }
 }
