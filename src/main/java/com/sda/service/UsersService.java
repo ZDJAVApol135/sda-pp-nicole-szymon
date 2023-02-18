@@ -79,7 +79,7 @@ public class UsersService {
     }
 
     public UserDTO update(User user, String username) {
-        if (user.getUsername().equals(username)) {
+        if (!user.getUsername().equals(username)) {
             throw new UsernameConflictException("Usernames does not match");
         }
         boolean exists = usersDAO.exists(username);
