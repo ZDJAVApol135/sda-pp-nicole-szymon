@@ -17,7 +17,7 @@ public class UsersService {
     private final UsersDAO usersDAO;
     private final UserMapper userMapper;
 
-    public List<UserDTO> findAll(){
+    public List<UserDTO> findAll() {
 //        List<User> users = usersDAO.findAll();
 
 //        List<UserDTO> userDTOS = new ArrayList<>();
@@ -60,7 +60,7 @@ public class UsersService {
         return userDTO;
     }
 
-    public void deleteByUsername(String username){
+    public void deleteByUsername(String username) {
         boolean deleted = usersDAO.delete(username);
 
         if (!deleted) {
@@ -68,6 +68,7 @@ public class UsersService {
             throw new NotFoundException(message);
         }
     }
+
     public void create(User user) {
         boolean exists = usersDAO.exists(user.getUsername());
         if (exists) {
@@ -75,5 +76,23 @@ public class UsersService {
             throw new UsernameConflictException(message);
         }
         usersDAO.create(user);
+    }
+
+    public UserDTO update(User user, String username) {
+        if (user.getUsername().equals(username)) {
+            throw new UsernameConflictException("Usernames does not match");
+        }
+        boolean exists = usersDAO.exists(username);
+        throwNotFoundExceptionIfTrue(username, !exists);
+
+        User updatedUser = usersDAO.update(user);
+        return userMapper.map(updatedUser);
+    }
+
+    private void throwNotFoundExceptionIfTrue(String username, boolean condition) {
+        if (condition) {
+            String message = "User with username: '%s' not found".formatted(username);
+            throw new NotFoundException(message);
+        }
     }
 }
