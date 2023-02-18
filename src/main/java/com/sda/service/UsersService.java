@@ -2,7 +2,7 @@ package com.sda.service;
 
 import com.sda.dao.UsersDAO;
 import com.sda.dto.UserDTO;
-import com.sda.exeption.NotFoundException;
+import com.sda.exception.NotFoundException;
 import com.sda.mapper.UserMapper;
 import com.sda.model.User;
 import lombok.RequiredArgsConstructor;
@@ -51,11 +51,20 @@ public class UsersService {
         User user = usersDAO.findByUsername(username);
 
         if (user == null) {
-            String massage = "User with username: '%s' not found".formatted(username);
-            throw new NotFoundException(massage);
+            String message = "User with username: '%s' not found".formatted(username);
+            throw new NotFoundException(message);
         }
 
         UserDTO userDTO = userMapper.map(user);
         return userDTO;
+    }
+
+    public void deleteByUsername(String username){
+        boolean deleted = usersDAO.delete(username);
+
+        if (!deleted) {
+            String message = "User with username: '%s' not found".formatted(username);
+            throw new NotFoundException(message);
+        }
     }
 }
